@@ -80,6 +80,7 @@ Created on Thu Nov 23 12:38:33 2023
 
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import filedialog
 
 def show_home():
     canvas.yview_moveto(0)
@@ -93,19 +94,53 @@ def show_pdf():
 def show_contact():
     canvas.yview_moveto(0.75)
 
+
+def image_render(section, image, aligment):  
+    
+    # Create a frame for the image
+     image_frame_pdf = tk.Frame(section, bg="")
+     image_frame_pdf.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
+
+     # Add an image to the image frame with reduced size
+     original_image_pdf = tk.PhotoImage(file=image)
+
+     # Resize the image
+     resized_image_pdf = original_image_pdf.subsample(3, 3)
+
+     image_label_pdf = tk.Label(image_frame_pdf, image=resized_image_pdf)
+     image_label_pdf.image = resized_image_pdf  # Keep a reference to the image to prevent garbage collection
+     
+     if aligment == 'LEFT':
+         # Place the image to the left of the frame
+         image_label_pdf.pack(side=tk.LEFT)
+     elif aligment == 'RIGHT':
+         image_label_pdf.pack(side=tk.RIGHT)
+
+     # Adjust column weights to make them expand proportionally
+     section.columnconfigure(0, weight=1)
+
+     # Adjust row weight to make it expand with the window
+     section.rowconfigure(0, weight=1)
+     
+def upload_pdf():
+    file_path = filedialog.askopenfilename(filetypes=[("PDF files", "*.pdf")])
+    if file_path:
+        messagebox.showinfo("File Uploaded", f"Selected PDF file: {file_path}")
+
+
 def home_content():
     
     # Create a frame for text
     text_frame = tk.Frame(top_section, bg="")
     text_frame.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
-
+    
+    
     # Add text to the text frame
     pdf_text = tk.Text(text_frame, wrap=tk.WORD, font=("Comic Sans MS", 12))
     pdf_text.insert(tk.END, """For a variety of reasons, the PDF (Portable Document Format) file format has grown to be widely used and significant in today's digital world. PDFs offer a level of security for important data by supporting password protection and encryption.""")
     pdf_text.config(state=tk.DISABLED)
-    pdf_text.pack(expand=True, fill=tk.BOTH)
+    pdf_text.pack(expand=True, fill=tk.BOTH)    
  
-
     # Create a frame for the image
     image_frame = tk.Frame(top_section, bg="")
     image_frame.grid(row=0, column=1, sticky="nsew", padx=0, pady=0)
@@ -126,7 +161,54 @@ def home_content():
     # Adjust row weight to make it expand with the window
     top_section.rowconfigure(0, weight=1)
 
-# Rest of your code...
+def pdf_content():  
+    image_render(middle_section,"Book2.png",aligment='LEFT')
+    
+    # Add Upload PDF button
+    upload_button = tk.Button(middle_section, text="Upload PDF", command=upload_pdf)
+    upload_button.grid(row=0, column=0, pady=10)
+    
+    # image_render(middle_section,"Book3.png",aligment='RIGHT')
+    
+
+def about_content():
+    image_render(about_section, "girl1.png",aligment='LEFT')
+    
+    # Create a frame for text
+    text_frame_ab = tk.Frame(about_section, bg="")
+    text_frame_ab.grid(row=0, column=1, sticky="nsew", padx=0, pady=0)
+
+    # Add text to the text frame
+    pdf_text_ab = tk.Text(text_frame_ab, wrap=tk.WORD, font=("Comic Sans MS", 12))
+    pdf_text_ab.insert(tk.END, """Welcome to our innovative and efficient PDF extraction project! Our PDF Extraction Project takes center stage in an era where information is crucial by providing state-of-the-art 
+solutions that expedite the extraction of insightful data from PDF documents. Our top priority is creating user-friendly interfaces so that our clients may extract PDFs with ease and convenience.""")
+    pdf_text_ab.config(state=tk.DISABLED)
+    pdf_text_ab.pack(expand=True, fill=tk.BOTH)
+
+    # Adjust column weights to make them expand proportionally
+    about_section.columnconfigure(0, weight=1)
+    about_section.columnconfigure(1, weight=300)
+
+
+def contact_content():
+    # Create a frame for image
+    image_render(bottom_section, "girl2.png", aligment='LEFT')
+
+    # Create a frame for text
+    text_frame_con = tk.Frame(bottom_section, bg="")
+    text_frame_con.grid(row=0, column=1, sticky="nsew", padx=0, pady=0)
+
+    # Add text to the text frame
+    pdf_text_con = tk.Text(text_frame_con, wrap=tk.WORD, font=("Comic Sans MS", 12))
+    pdf_text_con.insert(tk.END, """We appreciate your interest in our PDF extraction project. Your feedback and inquiries are important to us. Whether you have questions about the project's features, encounter any issues, or have suggestions for improvements, we encourage you to get in touch with us.
+You can reach us by email here: pratiksha.garkar@mmit.edu.in""")
+    pdf_text_con.config(state=tk.DISABLED)
+    pdf_text_con.pack(expand=True, fill=tk.BOTH)
+
+    # Adjust column weights to make them expand proportionally
+    bottom_section.columnconfigure(0, weight=1)
+    bottom_section.columnconfigure(1, weight=300)
+
 
 # Create a main window
 root = tk.Tk()
@@ -158,16 +240,21 @@ canvas.pack(fill=tk.BOTH, expand=True)
 top_section = tk.Frame(canvas, bg="")
 bottom_section = tk.Frame(canvas, bg="")
 middle_section = tk.Frame(canvas, bg="")
-contact_section = tk.Frame(canvas, bg="")
+about_section = tk.Frame(canvas, bg="")
 
 # Place the frames on the canvas
 top_section.place(relx=0, rely=0, relwidth=1, relheight=0.25)
 bottom_section.place(relx=0, rely=0.75, relwidth=1, relheight=0.25)
 middle_section.place(relx=0, rely=0.25, relwidth=1, relheight=0.25)
-contact_section.place(relx=0, rely=0.5, relwidth=1, relheight=0.25)
+about_section.place(relx=0, rely=0.5, relwidth=1, relheight=0.25)
 
 # Add text and image to the Home section
 home_content()
-
+# Add button and image to the PDF process section
+pdf_content()
+about_content()
+contact_content()
 # Start the main event loop
 root.mainloop()
+
+
