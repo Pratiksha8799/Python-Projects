@@ -1,86 +1,17 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 """
 Created on Thu Nov 23 12:38:33 2023
 
 @author: user
 """
-
-# import tkinter as tk
-# from tkinter import messagebox
-
-# def show_home():
-#     canvas.yview_moveto(0)
-
-# def show_about():
-#     canvas.yview_moveto(0.25)
-
-# def show_pdf():
-#     canvas.yview_moveto(0.5)
-
-# def show_contact():
-#     canvas.yview_moveto(0.75)
-    
-# def home_content():
-#     pdf_text = tk.Text(top_section, wrap=tk.WORD, font=("Comic Sans MS", 12), padx=10, pady=10)
-#     pdf_text.insert(tk.END, """For a variety of reasons, the PDF (Portable Document Format) file format has grown to be widely used and significant in today's digital world. PDFs offer a level of security for important data by supporting password protection and encryption.""")
-#     pdf_text.config(state=tk.DISABLED)
-#     pdf_text.pack(expand=True,fill=tk.BOTH)
-#     print('Yes')
-    
-#     # Add an image to the Home section
-#     image_path = "Book1.png"  # Replace with the actual path to your image
-#     image = tk.PhotoImage(file=image_path)
-#     image_label = tk.Label(top_section, image=image)
-#     image_label.pack()
-    
-
-# # Create a main window
-# root = tk.Tk()
-
-# # Set the window state to maximized (works across different resolutions)
-# root.wm_state("zoomed")
-
-# # Set a title for the window
-# root.title("SimplyPDF")
-# root.iconbitmap("logo1.ico")
-
-# # Create a menu bar
-# menubar = tk.Menu(root)
-
-# # Add menus to the menu bar without tearoff
-# menubar.add_command(label="Home", command=show_home)
-# menubar.add_command(label="PDF Process", command=show_pdf)
-# menubar.add_command(label="About", command=show_about)
-# menubar.add_command(label="Contact", command=show_contact)
-
-# # Configure the root window with the menu
-# root.config(menu=menubar)
-
-# # Create a canvas to hold the sections
-# canvas = tk.Canvas(root)
-# canvas.pack(fill=tk.BOTH, expand=True)
-
-# # Create frames for the sections
-# top_section = tk.Frame(canvas, bg="")
-# bottom_section = tk.Frame(canvas, bg="")
-# middle_section = tk.Frame(canvas, bg="")
-# contact_section = tk.Frame(canvas, bg="")
-
-# # Place the frames on the canvas
-# top_section.place(relx=0, rely=0, relwidth=1, relheight=0.25)
-# bottom_section.place(relx=0, rely=0.75, relwidth=1, relheight=0.25)
-# middle_section.place(relx=0, rely=0.25, relwidth=1, relheight=0.25)
-# contact_section.place(relx=0, rely=0.5, relwidth=1, relheight=0.25)
-
-# # Add PDF info and GIF in Home section
-# home_content()
-
-# # Start the main event loop
-# root.mainloop()    
-
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
+import fitz  # PyMuPDF
+from PIL import Image
+import pytesseract
+import regex as re
+import pandas as pd
 
 def show_home():
     canvas.yview_moveto(0)
@@ -122,10 +53,80 @@ def image_render(section, image, aligment):
      # Adjust row weight to make it expand with the window
      section.rowconfigure(0, weight=1)
      
+def download_csv(df,pdf_window):
+    # Your CSV file saving logic here
+    df.to_csv("Bill.csv", index=False)
+    pdf_window.destroy()
+    
+
+def show_pdf_window(pdf_path):
+   # Create a new window
+    pdf_window = tk.Toplevel(root)
+    pdf_window.title("PDF Viewer")
+    pdf_window.wm_state("zoomed")
+    # Load the PDF document
+    pdf_document = fitz.open(pdf_path)
+    
+    # Display each page as an image
+    for page_number in range(pdf_document.page_count):
+        page = pdf_document[page_number]
+        image = page.get_pixmap()
+        
+        text = page.get_text()
+        
+        # Convert the PyMuPDF image to a PhotoImage
+        tk_image = tk.PhotoImage(data=image.tobytes("ppm"))
+        
+        # Create a label to display the image
+        label = tk.Label(pdf_window, image=tk_image)
+        label.image = tk_image  # Keep a reference to prevent garbage collection
+        label.pack(padx=10, pady=10, side=tk.LEFT)  # Add padding to the left
+        
+        # Convert the PyMuPDF image to a PIL image
+        pil_image = Image.frombytes("RGB", (image.width, image.height), image.samples)
+        
+        # Use OCR to extract text from the image
+        text = pytesseract.image_to_string(pil_image)
+        
+    pdf_document = fitz.open(pdf_path)
+    for page_number in range(pdf_document.page_count):
+         page = pdf_document[page_number]
+         image = page.get_pixmap()
+         
+         # Convert the PyMuPDF image to a PIL image
+         pil_image = Image.frombytes("RGB", (image.width, image.height), image.samples)
+         
+         # Use OCR to extract text from the image
+         text = pytesseract.image_to_string(pil_image)
+         
+         cleaned_text = ' '.join(line.strip() for line in text.splitlines() if line.strip())
+         Add = re.findall(r'(.*)(?=GST NO|GST No)',cleaned_text)[0]
+         GST = re.findall(r'GST\s*No\s*:\s*([A-Za-z0-9]+)|GST\s*NO\s*([A-Za-z0-9]+)',cleaned_text)[0][0]
+         Date = re.findall(r'\d{2}\/\d{2}\/\d{2}',cleaned_text)[0]
+         try:
+           FSSAI_NO = re.findall(r'(?<=FSSAI Lic No.)\s*\d*\s*\d*', cleaned_text)[0]
+         except:
+             FSSAI_NO = None 
+    pdf_document.close()
+    df = pd.DataFrame({"Address":[Add],
+         "GST NO":[GST],
+         "Date":[Date],
+        	"FSSAT NO":[FSSAI_NO]
+            })    
+    # Add a "Download CSV" button
+    download_button = tk.Button(pdf_window, text="Download CSV", command=lambda: download_csv(df,pdf_window))
+    download_button.pack(pady=300, side=tk.BOTTOM)
+    
+    
+     
+
 def upload_pdf():
+    
     file_path = filedialog.askopenfilename(filetypes=[("PDF files", "*.pdf")])
     if file_path:
         messagebox.showinfo("File Uploaded", f"Selected PDF file: {file_path}")
+        show_pdf_window(file_path)
+
 
 
 def home_content():
@@ -208,6 +209,7 @@ You can reach us by email here: pratiksha.garkar@mmit.edu.in""")
     # Adjust column weights to make them expand proportionally
     bottom_section.columnconfigure(0, weight=1)
     bottom_section.columnconfigure(1, weight=300)
+
 
 
 # Create a main window
