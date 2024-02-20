@@ -6,7 +6,6 @@
 The Python tkinter library was used in the development of the Restaurant Bill PDF Extractor, a desktop application. With the help of this application's user-friendly interface, users may upload PDF restaurant bill invoices, extract relevant data, and store the information in a CSV file for later access and analysis.
  
 
-![Alt Text](https://github.com/Pratiksha8799/Python-Projects/blob/main/PDF/girl2.png)
 
 
 
