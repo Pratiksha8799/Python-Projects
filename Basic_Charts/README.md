@@ -16,7 +16,7 @@ Dash is based on Plotly, Flash, and ReactJS. It’s used to make live graphs and
 
 **Plotly** 
 
-**Jupter Notebook**
+**Jupyter Notebook**
 
 
 ## Getting Started
@@ -33,7 +33,7 @@ GitHub
     2. Install Jupyter Notebook. (If not installed)
     3. Install the required packages.
     4. Open .ipynb file in Jupyter Notebook.
-    5. Run all cells and you will get result.
+    5. Run all cells and you will get a result.
 
 
 
