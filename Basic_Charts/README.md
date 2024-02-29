@@ -1,7 +1,7 @@
 
 # Data visualization with Plotly 📊
 
-I started this project for learning data visualization using plotly library. In this project we learn about basic charts, interactive charts, and dash framework.  
+I started this project to learn data visualization using plotly library. In this project, we learn about basic charts, interactive charts, and dash framework.  
 Plotly provides various tools for interacting with the plots such as adding dropdowns, buttons, and sliders. The plot layout’s update menu feature can be used to build these. 
 Dash is based on Plotly, Flash, and ReactJS. It’s used to make live graphs and interactive online dashboards. For uses like stocks, medical, etc., this is significant.
 
