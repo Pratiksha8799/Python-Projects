@@ -3,7 +3,7 @@
 
 I started this project for learning data visualization using plotly library. In this project we learn about basic charts, interactive charts, and dash framework.  
 Plotly provides various tools for interacting with the plots such as adding dropdowns, buttons, and sliders. The plot layout’s update menu feature can be used to build these. 
-
+Dash is based on Plotly, Flash, and ReactJS. It’s used to make live graphs and interactive online dashboards. For uses like stocks, medical, etc., this is significant.
 
 ![Alt Text](https://github.com/Pratiksha8799/Python-Projects/blob/main/Basic_Charts/images/Visualization.png)
 
@@ -30,8 +30,11 @@ Setup Jupyter Notebook
 GitHub
 
     1. Clone or download the project.
-    2. Install the required packages.
- 
+    2. Install Jupyter Notebook. (If not installed)
+    3. Install the required packages.
+    4. Open .ipynb file in Jupyter Notebook.
+    5. Run all cells and you will get result.
+
 
 
 
@@ -45,6 +48,8 @@ GitHub
 ![App Screenshot](https://github.com/Pratiksha8799/Python-Projects/blob/main/Basic_Charts/images/basic_bar.PNG)
 * Basic sunburst chart
 ![App Screenshot](https://github.com/Pratiksha8799/Python-Projects/blob/main/Basic_Charts/images/basic_sunbrust.PNG)
+* Plot using dash framework
+![App Screenshot](https://github.com/Pratiksha8799/Python-Projects/blob/main/Basic_Charts/images/dash1.PNG)
 
 
 ## Documentation
